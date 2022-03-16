@@ -1,2 +1,3 @@
+import run from "./run";
 
-console.log('hi');
+run();
