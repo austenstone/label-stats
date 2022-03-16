@@ -1,0 +1,23 @@
+{
+    "env": {
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "google"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {},
+    "ignorePatterns": [
+        "dist/**",
+        "jest.config.js",
+        "**/node_modules/**"
+    ]
+}
