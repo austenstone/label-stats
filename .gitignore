@@ -1,3 +1,4 @@
 node_modules
 dist
-labels.json
+labels*.csv
+labels*.json
