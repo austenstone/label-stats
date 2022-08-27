@@ -15,18 +15,21 @@ jobs:
         with:
           script: |
             const data = Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`));
-            await core.summary
-              .addRaw(data.slice(0, 20).reduce((acc, [key, value]) =>
+            const rest = data.slice(20)?.reduce((total, [key, value]) => total + value, 0);
+            const raw = data.slice(0, 20).reduce((acc, [key, value]) =>
               acc + `\n    "${key}" : ${value}`,
               `\`\`\`mermaid
-              pie showData
-                title Label Usage`
-            ) + '\n```', true)
-              .addTable([
-                [{data: 'Label', header: true}, {data: 'Usage', header: true}],
-                ...data.reduce((acc, [key, value]) => {
-                  acc.push([key, JSON.stringify(value)]);
-                  return acc;
-                }, [])
-              ])
+            pie showData
+            title Label Usage`)
+              + (rest ? `\n    "rest" : ${rest}` : '') + '\n```';
+            const table = [
+              [{ data: 'Label', header: true }, { data: 'Usage', header: true }],
+              ...data.reduce((acc, [key, value]) => {
+                acc.push([key, JSON.stringify(value)]);
+                return acc;
+              }, [])
+            ];
+            await core.summary
+              .addRaw(raw, true)
+              .addTable(table)
               .write();
