@@ -1,4 +1,4 @@
-# Action
+# Label Usage Action
 
 An [Action](https://docs.github.com/en/actions) that outputs a repos label usage as JSON or CSV.
 
