@@ -48,7 +48,7 @@ jobs:
       - run: echo "${{ steps.labels.outputs.data }}" > labels.csv
       - uses: actions/upload-artifact@v3
         with:
-          name: Label Usage CSV
+          name: labels.csv
           path: labels.csv
 
 ```
