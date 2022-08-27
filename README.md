@@ -78,6 +78,14 @@ jobs:
               .write()
 ```
 
+Or reuse the workflow in this repo.
+
+```yml
+jobs:
+  label_usage:
+    uses: austenstone/label-stats/.github/workflows/pi-chart-job-summary.yml@main
+```
+
 ## ➡️ Inputs
 Various inputs are defined in [`action.yml`](action.yml):
 
