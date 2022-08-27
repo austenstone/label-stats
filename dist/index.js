@@ -12811,8 +12811,11 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const octokit = github.getOctokit(input.token);
     const owner = input.owner;
     const repo = input.repo;
-    labels = yield core.group('Get all labels...', () => __awaiter(void 0, void 0, void 0, function* () { return getAllLabels(octokit, owner, repo); }));
-    labels = Object.assign(Object.assign({}, labels), yield core.group('Get issue label counts...', () => __awaiter(void 0, void 0, void 0, function* () { return getIssueLabels(octokit, owner, repo); })));
+    const [allLabels, issueLabels] = yield Promise.all([
+        core.group('Get all labels...', () => __awaiter(void 0, void 0, void 0, function* () { return getAllLabels(octokit, owner, repo); })),
+        core.group('Get issue labels...', () => __awaiter(void 0, void 0, void 0, function* () { return getIssueLabels(octokit, owner, repo); }))
+    ]);
+    labels = Object.assign(Object.assign({}, allLabels), issueLabels);
     labels = Object.entries(labels)
         .sort(([, a], [, b]) => b - a)
         .reduce((r, [k, v]) => (Object.assign(Object.assign({}, r), { [k]: v })), {});

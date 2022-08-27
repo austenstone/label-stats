@@ -132,8 +132,11 @@ const run = async (): Promise<void> => {
   const owner = input.owner;
   const repo = input.repo;
 
-  labels = await core.group('Get all labels...', async () => getAllLabels(octokit, owner, repo))
-  labels = { ...labels, ...await core.group('Get issue label counts...', async () => getIssueLabels(octokit, owner, repo)) }
+  const [allLabels, issueLabels] = await Promise.all([
+    core.group('Get all labels...', async () => getAllLabels(octokit, owner, repo)),
+    core.group('Get issue labels...', async () => getIssueLabels(octokit, owner, repo))
+  ]);
+  labels = { ...allLabels, ...issueLabels }
   labels = Object.entries(labels)
     .sort(([, a], [, b]) => b - a)
     .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});

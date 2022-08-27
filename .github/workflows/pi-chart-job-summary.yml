@@ -18,8 +18,8 @@ jobs:
         with:
           script: |
             const data = Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`));
-            const rest = data.slice(20)?.reduce((total, [key, value]) => total + value, 0);
-            const raw = data.slice(0, 20).reduce((acc, [key, value]) =>
+            const rest = data.slice(19)?.reduce((total, [key, value]) => total + value, 0);
+            const raw = data.slice(0, 19).reduce((acc, [key, value]) =>
               acc + `\n    "${key}" : ${value}`,
               `\`\`\`mermaid
             pie showData
