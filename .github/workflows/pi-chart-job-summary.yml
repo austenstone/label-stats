@@ -10,21 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: austenstone/label-stats@main
-        with:
-          repo: label-stats
-          owner: austenstone
         id: labels
       - uses: actions/github-script@v6
         with:
           script: |
             const data = Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`));
-            const rest = data.slice(19)?.reduce((total, [key, value]) => total + value, 0);
+            const other = data.slice(19)?.reduce((total, [key, value]) => total + value, 0);
             const raw = data.slice(0, 19).reduce((acc, [key, value]) =>
               acc + `\n    "${key}" : ${value}`,
               `\`\`\`mermaid
             pie showData
             title Label Usage`)
-              + (rest ? `\n    "rest" : ${rest}` : '') + '\n```';
+              + (other ? `\n    "other" : ${other}` : '') + '\n```';
             const table = [
               [{ data: 'Label', header: true }, { data: 'Usage', header: true }],
               ...data.reduce((acc, [key, value]) => {
