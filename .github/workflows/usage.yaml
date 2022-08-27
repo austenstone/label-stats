@@ -13,3 +13,15 @@ jobs:
       - uses: ./
         id: labels
       - run: echo "${{ steps.labels.outputs.data }}"
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            await core.summary
+              .addHeading('Issues Statistics')
+              .addRaw(`pie showData
+              title Key elements in Product X
+              "Calcium" : 42.96
+              "Potassium" : 50.05
+              "Magnesium" : 10.01
+              "Iron" :  5`, true)
+              .write()
