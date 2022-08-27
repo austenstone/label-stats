@@ -12782,7 +12782,6 @@ const getIssueLabels = (octokit, owner, repo) => __awaiter(void 0, void 0, void 
         }
       }
     }`);
-        console.log(JSON.stringify(response, null, 2));
         totalCount = response.repository.issues.totalCount;
         totalProcessed += response.repository.issues.nodes.length;
         hasNextPage = response.repository.issues.pageInfo.hasNextPage;

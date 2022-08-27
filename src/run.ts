@@ -93,7 +93,6 @@ const getIssueLabels = async (octokit, owner, repo): Promise<{ [key: string]: nu
       }
     }`);
 
-    console.log(JSON.stringify(response, null, 2));
     totalCount = response.repository.issues.totalCount;
     totalProcessed += response.repository.issues.nodes.length;
     hasNextPage = response.repository.issues.pageInfo.hasNextPage
