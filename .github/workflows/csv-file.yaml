@@ -1,0 +1,20 @@
+name: Get Label Usage CSV
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  label-usage-csv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          content-type: csv
+        id: labels
+      - run: echo "${{ steps.labels.outputs.data }}" > labels.csv
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Label Usage CSV
+          path: labels.csv

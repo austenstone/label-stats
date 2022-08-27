@@ -16,18 +16,66 @@ Add this PAT as a secret so we can use it as input `github-token`, see [Creating
 If your organization has SAML enabled you must authorize the PAT, see [Authorizing a personal access token for use with SAML single sign-on](https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on).
 -->
 
-#### Example
+#### Basic
 ```yml
-name: TypeScript Action Workflow
+name: Label Stats
 on:
   workflow_dispatch:
 
 jobs:
-  run:
-    name: Run Action
+  print-label-usage:
     runs-on: ubuntu-latest
     steps:
-      - uses: austenstone/action-typescript@main
+      - uses: austenstone/label-stats@main
+        id: labels
+      - run: echo "${{ steps.labels.outputs.data }}"
+```
+
+#### CSV File
+```yml
+name: Get Label Usage CSV
+on:
+  workflow_dispatch:
+
+jobs:
+  label-usage-csv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: austenstone/label-stats@main
+        with:
+          content-type: csv
+        id: labels
+      - run: echo "${{ steps.labels.outputs.data }}" > labels.csv
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Label Usage CSV
+          path: labels.csv
+
+```
+
+#### Pi Chart Job Summary
+```yml
+name: Usage
+on:
+  workflow_dispatch:
+
+jobs:
+  pi-chart-job-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: austenstone/label-stats@main
+        id: labels
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            await core.summary
+              .addRaw(Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`)).reduce((acc, [key, value]) =>
+              acc + `\n    "${key}" : ${value}`,
+              `\`\`\`mermaid
+              pie showData
+                title Label Usage`
+            ) + '\n```', true)
+              .write()
 ```
 
 ## ➡️ Inputs

@@ -1,18 +1,16 @@
-name: Usage
+name: Pi Chart
 on:
   push:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  run:
-    name: Run Action
+  pi-chart-job-summary:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         id: labels
-      - run: echo "${{ steps.labels.outputs.data }}"
       - uses: actions/github-script@v6
         with:
           script: |

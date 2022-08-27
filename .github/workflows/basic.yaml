@@ -1,0 +1,14 @@
+name: Basic
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  print-label-usage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        id: labels
+      - run: echo "${{ steps.labels.outputs.data }}"
