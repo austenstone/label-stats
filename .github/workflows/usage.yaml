@@ -1,0 +1,19 @@
+name: TypeScript Action Workflow
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run:
+    name: Run Action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        id: labels
+        with:
+          owner: austenstone
+          repo: label-stats
+          content-type: json
+      - run: echo "${{ steps.labels.outputs.data }}"

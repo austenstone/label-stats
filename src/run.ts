@@ -5,11 +5,19 @@ import ProgressBar from 'progress';
 
 interface Input {
   token: string;
+  file: string;
+  owner: string;
+  repo: string;
+  contentType: string;
 }
 
 export function getInputs(): Input {
   const result = {} as Input;
-  result.token = core.getInput('github-token') || process.env.GITHUB_TOKEN || '';
+  result.token = core.getInput('github-token');
+  result.file = core.getInput('file');
+  result.owner = core.getInput('owner');
+  result.repo = core.getInput('repo');
+  result.contentType = core.getInput('content-type');
   return result;
 }
 
@@ -38,13 +46,11 @@ const getAllLabels = async (octokit, owner, repo): Promise<{ [key: string]: numb
       }
     }`);
 
-    console.log(response);
     totalCount = response.repository.labels.totalCount;
     totalProcessed += response.repository.labels.edges.length;
     hasNextPage = response.repository.labels.pageInfo.hasNextPage
     endCursor = response.repository.labels.pageInfo.endCursor
 
-    console.log(response.repository.labels.edges);
     response.repository.labels.edges.forEach((edge) => {
       const name = edge.node.name;
       labels[name] = 0;
@@ -66,27 +72,28 @@ const getIssueLabels = async (octokit, owner, repo): Promise<{ [key: string]: nu
   let endCursor = null;
   while (hasNextPage) {
     const response: any = await octokit.graphql(`{
-            repository(owner: "${owner}", name: "${repo}") {
-              issues(first: 100, after:${JSON.stringify(endCursor)}) {
-                totalCount
-                pageInfo {
-                  hasNextPage
-                  endCursor
-                }
-                nodes {
-                  title
-                  labels(first: 100) {
-                    edges {
-                      node {
-                        name
-                      }
-                    }
-                  }
+      repository(owner: "${owner}", name: "${repo}") {
+        issues(first: 100, after:${JSON.stringify(endCursor)}) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          nodes {
+            title
+            labels(first: 100) {
+              edges {
+                node {
+                  name
                 }
               }
             }
-          }`);
+          }
+        }
+      }
+    }`);
 
+    console.log(JSON.stringify(response, null, 2));
     totalCount = response.repository.issues.totalCount;
     totalProcessed += response.repository.issues.nodes.length;
     hasNextPage = response.repository.issues.pageInfo.hasNextPage
@@ -99,43 +106,51 @@ const getIssueLabels = async (octokit, owner, repo): Promise<{ [key: string]: nu
       })
     });
 
-    bar = bar ? bar : new ProgressBar(':processed/:total [:bar] :rate/s :percent :etas', { total: Math.floor(totalCount) });
-    bar.tick(response.repository.issues.nodes.length, { processed: totalProcessed, total: totalCount });
+    if (totalCount > 0) {
+      bar = bar ? bar : new ProgressBar(':processed/:total [:bar] :rate/s :percent :etas', { total: Math.floor(totalCount) });
+      bar.tick(response.repository.issues.nodes.length, { processed: totalProcessed, total: totalCount });
+    }
   }
 
   return labels;
 }
 
+const keyValueToCSV = (labels: {
+  [key: string]: number;
+}, keyName = 'key', valueName = 'value'): string => Object.entries(labels).reduce((csv, [key, value]) =>
+  csv + `\n${key},${value}`, `${keyName},${valueName}`
+);
+
 const run = async (): Promise<void> => {
-  try {
-    const input = getInputs();
-    let labels = {} as { [key: string]: number; };
-    if (!fs.existsSync('labels.json')) {
-      const octokit: ReturnType<typeof github.getOctokit> = github.getOctokit(input.token);
-      const owner = 'github';
-      const repo = 'solutions-engineering';
-      console.log('Get all labels...');
-      labels = await getAllLabels(octokit, owner, repo)
-      console.log('Get issue label counts...');
-      labels = { ...labels, ...await getIssueLabels(octokit, owner, repo)}
-      const sortedLabels = Object.entries(labels)
-        .sort(([, a], [, b]) => a - b)
-        .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
-      console.log('Writing labels to labels.json...');
-      fs.writeFileSync('labels.json', JSON.stringify(sortedLabels, null, 2));
-    } else {
-      labels = JSON.parse(fs.readFileSync('labels.json')?.toString());
-    }
-    
-    console.log('Writing labels to labels.csv...');
-    const header = 'key,value';
-    fs.writeFileSync('labels.csv', header);
-    Object.entries(labels).forEach(([key, value]) => {
-      fs.appendFileSync('labels.csv', '\n' + key + ',' + value);
-    })
-  } catch (error) {
-    core.setFailed(error instanceof Error ? error.message : JSON.stringify(error))
+  const input = getInputs();
+  let labels = {} as { [key: string]: number; };
+  if (fs.existsSync('labels.json')) {
+    labels = JSON.parse(fs.readFileSync('labels.json')?.toString());
+    return;
   }
+
+  const octokit: ReturnType<typeof github.getOctokit> = github.getOctokit(input.token);
+  const owner = input.owner;
+  const repo = input.repo;
+
+  labels = await core.group('Get all labels...', async () => getAllLabels(octokit, owner, repo))
+  labels = { ...labels, ...await core.group('Get issue label counts...', async () => getIssueLabels(octokit, owner, repo)) }
+  labels = Object.entries(labels)
+    .sort(([, a], [, b]) => a - b)
+    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+
+  let data = 'No Content';
+  switch (input.contentType.toLowerCase()) {
+    case 'json':
+      data = JSON.stringify(labels, null, 2);
+      break;
+    case 'csv':
+      data = keyValueToCSV(labels);
+      break;
+    default:
+      throw (new Error(`Unsupported content type: ${input.contentType}`));
+  }
+  core.setOutput('data', data);
 };
 
 export default run;
