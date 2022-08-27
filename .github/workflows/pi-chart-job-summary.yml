@@ -1,11 +1,14 @@
 name: Pi Chart
+
 on:
   push:
   pull_request:
   workflow_dispatch:
   workflow_call:
 
-permissions: {}
+permissions:
+  issues: read
+  pull-requests: read
 
 jobs:
   pi-chart-job-summary:
