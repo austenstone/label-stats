@@ -9,8 +9,7 @@ jobs:
   pi-chart-job-summary:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./
+      - uses: austenstone/label-stats@main
         id: labels
       - uses: actions/github-script@v6
         with:

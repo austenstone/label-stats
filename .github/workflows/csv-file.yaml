@@ -8,8 +8,7 @@ jobs:
   label-usage-csv:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./
+      - uses: austenstone/label-stats@main
         with:
           content-type: csv
         id: labels
