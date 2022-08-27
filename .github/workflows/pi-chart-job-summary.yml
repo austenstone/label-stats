@@ -23,9 +23,10 @@ jobs:
                 title Label Usage`
             ) + '\n```', true)
               .addTable([
-                [{data: 'File', header: true}, {data: 'Result', header: true}],
-                ['foo.js', 'Pass '],
-                ['bar.js', 'Fail '],
-                ['test.js', 'Pass ']
+                [{data: 'Label', header: true}, {data: 'Usage', header: true}],
+                ...data.reduce((acc, [key, value]) => {
+                  acc.push([key, value]);
+                  return acc;
+                }, [])
               ])
               .write();
