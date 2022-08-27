@@ -25,7 +25,7 @@ jobs:
               .addTable([
                 [{data: 'Label', header: true}, {data: 'Usage', header: true}],
                 ...data.reduce((acc, [key, value]) => {
-                  acc.push([key, value]);
+                  acc.push([key, JSON.stringify(value)]);
                   return acc;
                 }, [])
               ])
