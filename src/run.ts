@@ -71,17 +71,6 @@ const getIssueLabels = async (octokit, owner, repo): Promise<{ [key: string]: nu
   let hasNextPage = true;
   let endCursor = null;
   while (hasNextPage) {
-    core.summary
-              .addHeading('Issues Statistics')
-              .addRaw(`\n\`\`\`mermaid
-              pie showData
-                  title Key elements in Product X
-                  "Calcium" : 42.96
-                  "Potassium" : 50.05
-                  "Magnesium" : 10.01
-                  "Iron" :  5
-              \`\`\``, true)
-              .write()
     const response: any = await octokit.graphql(`{
       repository(owner: "${owner}", name: "${repo}") {
         issues(first: 100, after:${JSON.stringify(endCursor)}) {

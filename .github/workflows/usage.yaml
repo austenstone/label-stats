@@ -18,7 +18,7 @@ jobs:
           script: |
             await core.summary
               .addHeading('Issues Statistics')
-              .addRaw(`\`\`\`mermaid
+              .addRaw(`\n\`\`\`mermaid
               pie showData
                   title Key elements in Product X
                   "Calcium" : 42.96
