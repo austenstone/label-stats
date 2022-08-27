@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: austenstone/label-stats@main
+        with:
+          repo: label-stats
+          owner: austenstone
         id: labels
       - uses: actions/github-script@v6
         with:
