@@ -86,6 +86,8 @@ jobs:
     uses: austenstone/label-stats/.github/workflows/pi-chart-job-summary.yml@main
 ```
 
+![image](https://user-images.githubusercontent.com/22425467/187041031-0b130d52-7887-4d7e-9099-510db70b37ac.png)
+
 ## ➡️ Inputs
 Various inputs are defined in [`action.yml`](action.yml):
 
