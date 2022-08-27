@@ -12815,7 +12815,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     labels = yield core.group('Get all labels...', () => __awaiter(void 0, void 0, void 0, function* () { return getAllLabels(octokit, owner, repo); }));
     labels = Object.assign(Object.assign({}, labels), yield core.group('Get issue label counts...', () => __awaiter(void 0, void 0, void 0, function* () { return getIssueLabels(octokit, owner, repo); })));
     labels = Object.entries(labels)
-        .sort(([, a], [, b]) => a - b)
+        .sort(([, a], [, b]) => b - a)
         .reduce((r, [k, v]) => (Object.assign(Object.assign({}, r), { [k]: v })), {});
     let data = 'No Content';
     switch (input.contentType.toLowerCase()) {
