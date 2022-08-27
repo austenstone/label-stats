@@ -14,11 +14,18 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
+            const data = Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`));
             await core.summary
-              .addRaw(Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`)).reduce((acc, [key, value]) =>
+              .addRaw(data.slice(0, 20).reduce((acc, [key, value]) =>
               acc + `\n    "${key}" : ${value}`,
               `\`\`\`mermaid
               pie showData
                 title Label Usage`
             ) + '\n```', true)
-              .write()
+              .addTable([
+                [{data: 'File', header: true}, {data: 'Result', header: true}],
+                ['foo.js', 'Pass '],
+                ['bar.js', 'Fail '],
+                ['test.js', 'Pass ']
+              ])
+              .write();
