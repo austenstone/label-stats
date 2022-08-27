@@ -16,20 +16,11 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const val = Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`)).reduce((acc, [key, value]) =>
+            await core.summary
+              .addRaw(Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`)).reduce((acc, [key, value]) =>
               acc + `\n    "${key}" : ${value}`,
               `\`\`\`mermaid
               pie showData
                 title Label Usage`
-            ) + '```';
-            core.info(val);
-            await core.summary
-              .addRaw(`\`\`\`mermaid
-              pie showData
-                  title Label Usage
-                  "Calcium" : 42.96
-                  "Potassium" : 50.05
-                  "Magnesium" : 10.01
-                  "Iron" :  5
-              \`\`\``, true)
+            ) + '\n```', true)
               .write()
