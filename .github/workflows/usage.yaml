@@ -19,7 +19,7 @@ jobs:
             const val = Object.entries(JSON.parse(`${{ steps.labels.outputs.data }}`).reduce((acc, [key, value]) =>
               acc + `\n"${key}" : ${value}`,
               `title Key elements in Product X`
-            );
+            ));
             core.info(val);
             await core.summary
               .addRaw(`\`\`\`mermaid
