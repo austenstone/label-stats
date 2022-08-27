@@ -16,11 +16,15 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
+            const val = Object.entries(JSON.parse(data)).reduce((acc, [key, value]) =>
+              acc + `\n"${key}" : ${value}`,
+              `title Key elements in Product X`
+            );
+            core.info(val);
             await core.summary
-              .addHeading('Issues Statistics')
-              .addRaw(`\n\`\`\`mermaid
+              .addRaw(`\`\`\`mermaid
               pie showData
-                  title Key elements in Product X
+                  title Label Usage
                   "Calcium" : 42.96
                   "Potassium" : 50.05
                   "Magnesium" : 10.01
