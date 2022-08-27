@@ -1,6 +1,6 @@
 # Action
 
-An [Action](https://docs.github.com/en/actions).
+An [Action](https://docs.github.com/en/actions) that outputs a repos label usage as JSON or CSV.
 
 ## Usage
 Create a workflow (eg: `.github/workflows/seat-count.yml`). See [Creating a Workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file).
@@ -84,13 +84,15 @@ Various inputs are defined in [`action.yml`](action.yml):
 | Name | Description | Default |
 | --- | - | - |
 | github&#x2011;token | Token to use to authorize. | ${{&nbsp;github.token&nbsp;}} |
+| content&#x2011;type | Content to output. json or csv | json |
+| owner | The owner of the repository | ${{ github.event.repository.owner.login }} |
+| repo | The name of the repository | ${{ github.event.repository.name }} |
 
-<!-- 
+
 ## ⬅️ Outputs
 | Name | Description |
 | --- | - |
-| output | The output. |
--->
+| data | The data output from the action |
 
 ## Further help
 To get more help on the Actions see [documentation](https://docs.github.com/en/actions).

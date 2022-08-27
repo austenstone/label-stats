@@ -11,7 +11,7 @@ inputs:
     default: ${{ github.token }}
     required: false
   content-type:
-    description: Content to output. json or csv.
+    description: Content to output. json or csv
     default: json
     required: false
   owner:
@@ -26,6 +26,7 @@ inputs:
 outputs:
   data:
     description: The data output from the action
+    
 runs:
   using: "node16"
   main: "dist/index.js"
