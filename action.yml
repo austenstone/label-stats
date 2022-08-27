@@ -1,8 +1,8 @@
-name: TypeScript Action
+name: Label Usage
 author: Austen Stone
-description: A TypeScript Action
+description: Get label usage for a repository
 branding:
-  icon: "plus"
+  icon: "tag"
   color: "blue"
 
 inputs:
