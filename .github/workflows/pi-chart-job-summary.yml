@@ -5,8 +5,7 @@ on:
   workflow_dispatch:
   workflow_call:
 
-permissions:
-  actions: write
+permissions: {}
 
 jobs:
   pi-chart-job-summary:
